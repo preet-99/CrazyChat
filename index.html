@@ -27,8 +27,6 @@
         <!-- Recent Chats -->
         <aside class="sidebar">
             <h3>Recent Chats</h3>
-
-
             <div class="chat_item active">
                 New Chat
             </div>
@@ -88,13 +86,13 @@
             </div>
 
         </aside>
+
+        <!-- Overlay -->
         <div class="overlay" id="overlay">
 
         </div>
+        <!-- Chat Bot Section -->
         <section class="chat_section">
-
-
-
             <!-- Messages -->
             <div id="chatBox" style="
             flex: 1;
@@ -105,21 +103,24 @@
             overflow-y: auto;
             /* background-color: #eef1f6; */
         ">
-
+                <!-- Welcome Message -->
+                <div id="connected">
+                    <p></p>
+                </div>
                 <div id="welcome_msg">
                     <p>Welcome to CrazyChat 😊</p>
                 </div>
 
             </div>
 
-
+            <!-- Input Section -->
             <div id="input-div">
 
 
                 <textarea placeholder="Type your message..." id="messageInput" class="input_area"
                     name="messageInput"></textarea>
 
-
+                <!-- Send Button -->
                 <button id="send-btn" onclick="sendMessage()">
                     Send
                 </button>
@@ -131,178 +132,7 @@
         </section>
 
     </main>
-    <script src="/real/script.js"></script>
-    <script>
-
-        let typingBubble = null;
-
-        function createTypingBubble() {
-            const wrap = document.createElement("div");
-            wrap.className = "chat-wrap";
-            wrap.style.display = "flex";
-
-            wrap.innerHTML = `
-                        <div class="typing-bubble">
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        </div>
-                    `;
-            return wrap;
-        }
-
-
-        function createBotDiv() {
-            const div = document.createElement("div");
-            div.style.alignSelf = "flex-start";
-            div.style.backgroundColor = "var(--bot-msg)";
-            div.style.color = "var(--text-main)";
-            div.style.border = "1px solid var(--border-soft)";
-
-            div.style.padding = "10px 14px";
-            div.style.borderRadius = "12px 12px 12px 0";
-            div.style.maxWidth = "70%";
-            div.style.boxShadow = "0 2px 6px rgba(0,0,0,0.1)";
-            div.style.fontSize = "1.1rem"
-            div.style.whiteSpace = "pre-wrap";
-            div.style.wordWrap = "break-word";
-            div.style.overflowWrap = "break-word";
-            div.style.wordBreak = "break-word";
-            div.style.height = "auto";
-
-            return div;
-        }
-
-
-        const postData = async (url, data) => {
-            try {
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data),
-                });
-
-                if (!response.ok) {
-                    throw new Error("Server error");
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-
-                const chatBox = document.getElementById("chatBox");
-                const botDiv = createBotDiv();
-
-
-                if (typingBubble) {
-                    typingBubble.remove();
-                    typingBubble = null;
-                }
-
-                chatBox.appendChild(botDiv);
-
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break
-
-                    const chunk = decoder.decode(value);
-                    botDiv.textContent += chunk;
-
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                }
-
-            } catch (error) {
-                const chatBox = document.getElementById("chatBox");
-                const errorDiv = createBotDiv();
-                errorDiv.textContent = "⚠️ Server is not responding. Please try again later.";
-
-                chatBox.appendChild(errorDiv);
-                chatBox.scrollTop = chatBox.scrollHeight;
-                console.error(error);
-            } finally {
-                if (typingBubble) {
-                    typingBubble.remove();
-                    typingBubble = null;
-                }
-            }
-
-
-        };
-
-
-        document.getElementById("messageInput").addEventListener("keydown", function (e) {
-            if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage()
-            }
-        })
-
-
-        const inputBox = document.getElementById("messageInput");
-
-        inputBox.addEventListener("input", () => {
-            inputBox.style.height = "auto"
-            inputBox.style.height = Math.min(inputBox.scrollHeight, 120) + "px";
-        })
-
-        function sendMessage() {
-            input = document.getElementById("messageInput");
-            chatBox = document.getElementById("chatBox");
-            // console.log(input.value)
-
-            text_msg = document.getElementById("welcome_msg");
-
-            // console.log(text_msg)
-
-            data = {
-                message: input.value
-            };
-
-
-            text_msg.style.display = "none";
-
-            if (input.value.trim() === "") return;
-
-
-
-            const msg = document.createElement("div");
-
-            // console.log(msg)
-            msg.textContent = input.value;
-            msg.style.height = "auto";
-            msg.style.alignSelf = 'flex-end';
-            msg.style.backgroundColor = "var(--user-msg)";
-            msg.style.color = "white";
-
-            msg.style.padding = "10px 14px";
-            msg.style.borderRadius = "12px 12px 0px 12px";
-            msg.style.maxWidth = "70%";
-            msg.style.boxShadow = "0 2px 6px rgba(0,0,0,0.15";
-            msg.style.whiteSpace = "pre-wrap";
-            msg.style.wordWrap = "break-word";
-            msg.style.overflowWrap = "break-word";
-            msg.style.wordBreak = "break-word";
-            msg.style.maxWidth = "70%";
-
-            chatBox.appendChild(msg);
-
-
-            if (typingBubble) {
-                typingBubble.remove();
-                typingBubble = null;
-            }
-
-            typingBubble = createTypingBubble();
-            chatBox.appendChild(typingBubble);
-
-            chatBox.scrollTop = chatBox.scrollHeight;
-            input.value = "";
-
-            postData("http://127.0.0.1:5000/chat", data);
-        }
-
-
-
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

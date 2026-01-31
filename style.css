@@ -31,7 +31,7 @@ body.dark {
     --sidebar-hover: #1e293b;
     --sidebar-active: #2563eb;
     --sidebar-text: #e5e7eb;
-    --bg-header: #020617;
+    --bg-header: #111628;
 
     --text-main: #e5e7eb;
     --text-muted: #9ca3af;
@@ -59,6 +59,7 @@ body {
     background: var(--bg-main);
 }
 
+/* Header */
 header {
     position: sticky;
     top: 0;
@@ -72,6 +73,7 @@ header {
     display: flex;
     align-items: center;
     gap: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 
@@ -99,7 +101,7 @@ header {
 }
 
 
-
+/* Humberger Icon */
 .menu_Btn {
     font-size: 26px;
     background: none;
@@ -109,7 +111,7 @@ header {
     display: none;
 }
 
-
+/* Toggle Button */
 .theme-btn {
     margin-left: auto;
     margin-right: 50px;
@@ -123,6 +125,7 @@ header {
     backdrop-filter: blur(6px);
 }
 
+/* Chat Container */
 .chat_layout {
     height: calc(100vh - 60px);
     width: 100vw;
@@ -132,9 +135,10 @@ header {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     /* padding: 12px; */
     background: var(--bg-main);
-    gap: 10px;
+    gap: 5px;
 }
 
+/* Recent Chats */
 .sidebar {
     height: 100%;
     overflow-y: auto;
@@ -145,16 +149,16 @@ header {
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease;
-    border-radius: 16px;
+    /* border-radius: 0px 16px; */
 }
 
 .sidebar::-webkit-scrollbar {
-    width: 5px;
+    width: 4px;
 }
 
 .sidebar::-webkit-scrollbar-thumb {
     background: rgba(100, 116, 139, 0.6);
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .sidebar h3 {
@@ -163,7 +167,7 @@ header {
 }
 
 
-
+/* Chat Items */
 .chat_item {
     padding: 10px;
     border-radius: 6px;
@@ -182,19 +186,21 @@ header {
     color: #fff;
 }
 
+/* Overlay */
+.overlay {
+    display: none;
+}
+
+/* Chat Section */
 .chat_section {
     flex: 1;
     display: flex;
     flex-direction: column;
     background: var(--bg-chat);
-    border-radius: 16px;
+    /* border-radius: 16px; */
 }
 
-.overlay {
-    display: none;
-}
-
-
+/*  Chat Bot Section */
 #chatBot {
     flex: 1;
     padding: 15px;
@@ -205,14 +211,22 @@ header {
     background: var(--bg-chat);
 }
 
+/* Connected */
+#connected{
+    font-size: 1.3rem;
+    text-align: center;
+    color: var(--text-muted);
+    
+}
 
+/* Welcome Message */
 #welcome_msg {
     font-size: 2rem;
     text-align: center;
     color: var(--text-muted);
 }
 
-
+/* Input Section */
 #input-div {
     display: flex;
     align-items: center;
@@ -243,6 +257,14 @@ body.dark .input_area {
     color: #e5e7eb;
 }
 
+/* Message Input  */
+#messageInput {
+    min-height: 42px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+/* Send Button */
 #send-btn {
     height: 42px;
     padding: 0 18px;
@@ -267,13 +289,6 @@ body.dark .input_area {
 }
 
 
-#messageInput {
-    min-height: 42px;
-    max-height: 120px;
-    overflow-y: auto;
-}
-
-
 #send-btn {
     padding: 10px 16px;
     background-color: #4f8cff;
@@ -285,7 +300,7 @@ body.dark .input_area {
 
 }
 
-
+/* Bot message */
 .chat-wrap {
     padding: 40px;
     align-self: flex-start;
@@ -347,7 +362,7 @@ body.dark .input_area {
 }
 
 
-
+/* Mic  */
 #micButton {
     padding: 12px;
     font-size: 24px;
@@ -468,6 +483,9 @@ body.dark .input_area {
 
 
 @media (max-width:600px) {
+    #connected{
+         font-size: 1.1rem;
+    }
     #welcome_msg {
         font-size: 1.2rem;
     }
