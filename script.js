@@ -11,7 +11,7 @@ window.speechSynthesis.onvoiceschanged = () => {
     console.log(window.speechSynthesis.getVoices());
 };
 
-const connectd = async () => { 
+const connectd = async () => {
 
     document.getElementById("connected").textContent = "🟡 Connecting...";
     try {
@@ -19,13 +19,13 @@ const connectd = async () => {
         if (!response.ok) {
             throw new Error("Server Error");
         }
-        document.getElementById("connected").textContent = "🟢 Connected"; 
+        document.getElementById("connected").textContent = "🟢 Connected";
 
     } catch (error) {
         document.getElementById("connected").textContent = "🔴 Not Connected";
         console.error(error)
     }
-   
+
 }
 
 
@@ -48,7 +48,7 @@ themeToggle.addEventListener("click", () => {
         themeToggle.textContent = "🌙";
     }
 })
-connectd()
+// connectd()
 
 //  STT or TTS functions:-
 
@@ -276,7 +276,10 @@ const postData = async (url, data) => {
         const response = await fetch(url,
             {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "text/plain"
+                },
                 body: JSON.stringify(data),
             }
         );
@@ -308,7 +311,7 @@ const postData = async (url, data) => {
             if (done) break;
 
             const chunk = decoder.decode(value);
-            fullReply += chunk;
+            fullReply += chunk
             botDiv.textContent += chunk;
 
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -325,10 +328,10 @@ const postData = async (url, data) => {
         chatBox.appendChild(errorDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
         console.error(error);
-        if (isVoiceChat) {
-            speakText(fullReply);
-            // Do not reset isVoiceChat here to keep mode active
-        }
+        // if (isVoiceChat) {
+        //     speakText(fullReply);
+        //     // Do not reset isVoiceChat here to keep mode active
+        // }
     } finally {
         // Hide typing bubble from the chat section 
         if (typingBubble) {
