@@ -1,33 +1,16 @@
 const themeToggle = document.getElementById("themeToggle");
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.querySelector(".sidebar");
+const parent_chat = document.getElementById("recent_chat_parent")
+const newChats = document.getElementById("new_chat");
+const chats = JSON.parse(localStorage.getItem("chats")) || [];
 let typingBubble = null;
+const chatBox = document.getElementById("chatBox");
+const language = 'hi-IN'
 
 let recognition;
 let isListening = false;
 let isVoiceChat = false;
-
-window.speechSynthesis.onvoiceschanged = () => {
-    console.log(window.speechSynthesis.getVoices());
-};
-
-const connectd = async () => {
-
-    document.getElementById("connected").textContent = "🟡 Connecting...";
-    try {
-        const response = await fetch("http://127.0.0.1:5000");
-        if (!response.ok) {
-            throw new Error("Server Error");
-        }
-        document.getElementById("connected").textContent = "🟢 Connected";
-
-    } catch (error) {
-        document.getElementById("connected").textContent = "🔴 Not Connected";
-        console.error(error)
-    }
-
-}
-
 
 //   Load saved theme 
 if (localStorage.getItem("theme") === "dark") {
@@ -48,17 +31,90 @@ themeToggle.addEventListener("click", () => {
         themeToggle.textContent = "🌙";
     }
 })
-// connectd()
+
+const connectd = async () => {
+
+    document.getElementById("connected").textContent = "🟡 Connecting...";
+    try {
+        const response = await fetch("http://127.0.0.1:5000");
+        if (!response.ok) { throw new Error("Server Error"); }
+
+        document.getElementById("connected").textContent = "🟢 Connected";
+    }
+    catch (error) {
+        document.getElementById("connected").textContent = "🔴 Not Connected, Please reload the page"; console.error(error)
+    }
+}
+
+setTimeout(() => {
+    document.getElementById("connected").textContent = "🔴 Not Connected, Please reload the page";
+    connectd();
+}, 4000);
+
+async function toHinglish(text) {
+    try {
+        const url = "https://inputtools.google.com/request?itc=hi-t-i0-und&num=1";
+
+        const res = await fetch(url, {
+            method: "POST",
+            body: text
+        });
+
+        const data = await res.json();
+
+        if (data[0] === "SUCCESS") {
+            return data[1][0][1][0]; // Best transliteration
+        }
+
+        return text;
+    } catch (e) {
+        console.error("Transliteration failed:", e);
+        return text;
+    }
+}
+
+function cleanForSpeech(text) {
+    return text
+        // Emojis remove
+        .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '')
+        // Markdown symbols remove (*, _, #, `)
+        .replace(/[*_#`~]/g, '')
+        // Url
+        .replace(/https?:\/\/\S+/g, '')
+        // Extra spaces fix
+        .replace(/\s+/g, ' ')
+        .trim();
+
+}
+
+
+// Keyboard keys (Enter) support button 
+document.getElementById("messageInput").addEventListener("keydown", function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    };
+});
+
+// Input field height manage
+const inputBox = document.getElementById("messageInput");
+
+inputBox.addEventListener("input", () => {
+    inputBox.style.height = "auto"
+    inputBox.style.height = Math.min(inputBox.scrollHeight, 120) + "px";
+});
+
+
 
 //  STT or TTS functions:-
 
 // Function to start speech recognition
-function startRecognition() {
+async function startRecognition() {
     //  Create a new speech recognition object 
     recognition = new webkitSpeechRecognition();
 
     //Set Language
-    recognition.lang = 'hi-IN';
+    recognition.lang = language;
 
     // Stop automatically after one sentence
     recognition.continuous = false;
@@ -81,7 +137,6 @@ function startRecognition() {
         for (let i = event.resultIndex; i < event.results.length; ++i) {
             transcript += event.results[i][0].transcript;
         }
-
         // Put recognized speech into input box
         document.getElementById("messageInput").value = transcript;
     };
@@ -173,7 +228,7 @@ function speakText(text) {
     const utterance = new SpeechSynthesisUtterance(text);
 
     // Configure voice properties
-    utterance.lang = 'hi-IN';
+    utterance.lang = language;
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -191,45 +246,6 @@ function speakText(text) {
     window.speechSynthesis.speak(utterance);
 }
 
-
-// Manage Overlay 
-const overlay = document.getElementById("overlay");
-menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("open");
-    overlay.classList.toggle("show");
-});
-
-overlay.addEventListener("click", () => {
-    sidebar.classList.remove("open");
-    overlay.classList.remove("show");
-});
-
-
-document.querySelectorAll(".chat_item").forEach(item => {
-    item.addEventListener("click", () => {
-        if (window.innerWidth <= 768) {
-            sidebar.classList.remove("open");
-            overlay.classList.remove("show");
-        };
-    });
-});
-
-
-// Keyboard keys (Enter) support button 
-document.getElementById("messageInput").addEventListener("keydown", function (e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    };
-});
-
-// Input field height manage
-const inputBox = document.getElementById("messageInput");
-
-inputBox.addEventListener("input", () => {
-    inputBox.style.height = "auto"
-    inputBox.style.height = Math.min(inputBox.scrollHeight, 120) + "px";
-});
 
 //  Bubble creation 
 function createTypingBubble() {
@@ -312,15 +328,16 @@ const postData = async (url, data) => {
 
             const chunk = decoder.decode(value);
             fullReply += chunk
-            botDiv.textContent += chunk;
+            if (isVoiceChat) {
+                const speakable = cleanForSpeech(fullReply);
+                speakText(speakable);
+                // Do not reset isVoiceChat here to keep mode active
+            }
+            botDiv.innerHTML =  marked.parse(fullReply);
 
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        if (isVoiceChat) {
-            speakText(fullReply);
-            // Do not reset isVoiceChat here to keep mode active
-        }
     } catch (error) {
         const errorDiv = createBotDiv();
         errorDiv.textContent = "⚠️ Server is not responding. Please try again later.";
@@ -342,60 +359,48 @@ const postData = async (url, data) => {
 };
 
 // Send Message Function
-function sendMessage() {
-    // Extract input, chatBox from html using id's
-    input = document.getElementById("messageInput");
-    chatBox = document.getElementById("chatBox");
+async function sendMessage() {
+    const input = document.getElementById("messageInput");
+    const chatBox = document.getElementById("chatBox");
+    const text_msg = document.getElementById("welcome_msg");
 
-    // Extract welcome_msg from html using id
-    text_msg = document.getElementById("welcome_msg");
-    text_msg.style.display = "none";
-
-    // Create object user input value
-    data = {
-        message: input.value
-    }
-
-    // Check user input is null or not
     if (input.value.trim() === "") return;
 
-    // Create a new element 'div' for user message 
-    const msg = document.createElement("div");
+    text_msg.style.display = "none";
+    document.getElementById("connected").style.display = "none";
 
-    // Add CSS to the div 
-    msg.textContent = input.value;
-    msg.style.height = "auto";
+    chatBox.style.justifyContent = "flex-start";
+    chatBox.style.alignItems = "stretch";
+
+
+    const cleanText = await toHinglish(input.value);
+
+    const data = {
+        message: cleanText
+    };
+
+
+    const msg = document.createElement("div");
+    // msg.textContent = input.value;
+    msg.textContent = cleanText;
     msg.style.alignSelf = 'flex-end';
     msg.style.backgroundColor = "var(--user-msg)";
     msg.style.color = "white";
     msg.style.padding = "10px 14px";
     msg.style.borderRadius = "12px 12px 0px 12px";
     msg.style.maxWidth = "70%";
-    msg.style.boxShadow = "0 2px 6px rgba(0,0,0,0.15";
+    msg.style.boxShadow = "0 2px 6px rgba(0,0,0,0.15)";
     msg.style.whiteSpace = "pre-wrap";
-    msg.style.wordWrap = "break-word";
-    msg.style.overflowWrap = "break-word";
-    msg.style.wordBreak = "break-word";
-    msg.style.maxWidth = "70%";
 
-    //  Append div to the parent(chatBox)
     chatBox.appendChild(msg);
 
-    // Control Typing Indicator
-    if (typingBubble) {
-        typingBubble.remove();
-        typingBubble = null;
-    }
-
-    // Create Typing Bubble and append it into chatBox 
+    if (typingBubble) typingBubble.remove();
     typingBubble = createTypingBubble();
     chatBox.appendChild(typingBubble);
 
     chatBox.scrollTop = chatBox.scrollHeight;
     input.value = "";
 
-    // POST API 
     postData("http://127.0.0.1:5000/chat", data);
-
-};
+}
 

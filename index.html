@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CrazyChat</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
 <body>
 
     <!-- Header -->
     <header class="app_header">
-        <button id="menuBtn" class="menu_Btn">☰</button>
         <div class="header-left">
             <h2>CrazyChat</h2>
         </div>
@@ -23,69 +23,6 @@
 
     <!-- Chat Container -->
     <main class="chat_layout">
-
-        <!-- Recent Chats -->
-        <aside class="sidebar">
-            <h3>Recent Chats</h3>
-            <div class="chat_item active">
-                New Chat
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-            <div class="chat_item">
-                Image info
-            </div>
-            <div class="chat_item">
-                Weather info
-            </div>
-
-        </aside>
 
         <!-- Overlay -->
         <div class="overlay" id="overlay">
@@ -105,7 +42,7 @@
         ">
                 <!-- Welcome Message -->
                 <div id="connected">
-                    <p></p>
+                    <p>🔴 Not connected, Please reload the page.</p>
                 </div>
                 <div id="welcome_msg">
                     <p>Welcome to CrazyChat 😊</p>
@@ -116,6 +53,8 @@
             <!-- Input Section -->
             <div id="input-div">
 
+                <label for="imageInput" class="upload-btn">📷</label>
+                <input type="file" id="imageInput" accept="image/*">
 
                 <textarea placeholder="Type your message..." id="messageInput" class="input_area"
                     name="messageInput"></textarea>
@@ -132,7 +71,8 @@
         </section>
 
     </main>
-    <script src="script.js"></script>
+    <script src="script.js">
+    </script>
 </body>
 
 </html>

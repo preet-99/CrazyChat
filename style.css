@@ -100,17 +100,6 @@ header {
     justify-content: flex-end;
 }
 
-
-/* Humberger Icon */
-.menu_Btn {
-    font-size: 26px;
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    display: none;
-}
-
 /* Toggle Button */
 .theme-btn {
     margin-left: auto;
@@ -138,54 +127,6 @@ header {
     gap: 5px;
 }
 
-/* Recent Chats */
-.sidebar {
-    height: 100%;
-    overflow-y: auto;
-    width: 260px;
-    background: var(--bg-sidebar);
-    color: var(--sidebar-text);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease;
-    /* border-radius: 0px 16px; */
-}
-
-.sidebar::-webkit-scrollbar {
-    width: 4px;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-    background: rgba(100, 116, 139, 0.6);
-    border-radius: 6px;
-}
-
-.sidebar h3 {
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-
-/* Chat Items */
-.chat_item {
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    border: 1px solid var(--bg-chat-item-border);
-    background: var(--sidebar-item);
-}
-
-.chat_item:hover {
-    background: var(--sidebar-hover)
-}
-
-.chat_item.active {
-    background: var(--sidebar-active);
-    color: #fff;
-}
-
 /* Overlay */
 .overlay {
     display: none;
@@ -209,6 +150,8 @@ header {
     gap: 12px;
     overflow-y: auto;
     background: var(--bg-chat);
+    justify-content: center;   
+    align-items: center; 
 }
 
 /* Connected */
@@ -235,6 +178,25 @@ header {
     background: var(--bg-chat);
     border-top: 1px solid var(--border-soft);
 }
+
+.upload-btn {
+    height: 42px;
+    min-width: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    background: var(--user-msg);
+    color: white;
+    transition: 0.2s ease;
+}
+
+.upload-btn:hover {
+    transform: scale(1.05);
+}
+
 
 .input_area {
     flex: 1;
